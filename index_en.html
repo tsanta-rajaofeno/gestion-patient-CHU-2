@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion des Patients</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="logo_chu.jpg" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="flex-container">
+      <table id="patientTable">
+        <thead>
+          <tr>
+            <td class="left">
+              <form
+                onsubmit="
+                  event.preventDefault();
+                  onFormsubmit();
+                "
+                autocomplete="off"
+                id="patientForm"
+              >
+                <div>
+                  <label for="nom">Last Name:</label>
+                  <input
+                    type="text"
+                    name="nom"
+                    id="nom"
+                    placeholder="Last Name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="prenom">First Name:</label>
+                  <input
+                    type="text"
+                    name="prenom"
+                    id="prenom"
+                    placeholder="First Name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="age">Age:</label>
+                  <input
+                    type="number"
+                    name="age"
+                    id="age"
+                    placeholder="Age"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="addresse">Address:</label>
+                  <input
+                    type="text"
+                    name="addresse"
+                    id="addresse"
+                    placeholder="Address"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="maladie">Disease:</label>
+                  <input
+                    type="text"
+                    name="maladie"
+                    id="maladie"
+                    placeholder="Disease"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="phone">Phone:</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    placeholder="Phone"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="date_entree">Entry Date:</label>
+                  <input
+                    type="date"
+                    name="date_entree"
+                    id="date_entree"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="sejours">Estimated Stays (days):</label>
+                  <input
+                    type="number"
+                    name="sejours"
+                    id="sejours"
+                    placeholder="5"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="sex">Sex:</label>
+                  <select name="sex" id="sex" required>
+                    <option value="">Select Sex</option>
+                    <option value="M">M</option>
+                    <option value="F">F</option>
+                  </select>
+                </div>
+
+                <div class="form-action-buttons">
+                  <input type="submit" value="Save" />
+                </div>
+              </form>
+            </td>
+
+            <td class="right">
+              <table class="list" id="patient_liste">
+                <thead>
+                  <tr>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Age</th>
+                    <th>Address</th>
+                    <th>Disease</th>
+                    <th>Phone</th>
+                    <th>E/D</th>
+                    <th>E/S(d)</th>
+                    <th>Sex</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Les patients seront ajoutés ici dynamiquement -->
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </thead>
+      </table>
+      <div class="language">
+        <a href="index.html">Fr</a> | <a href="index_en.html">En</a>
+      </div>
+    </div>
+
+    <input
+      type="text"
+      id="searchInput"
+      onkeyup="searchTable()"
+      placeholder="Find a patient..."
+    />
+    <script src="script.js"></script>
+    <!-- Boutons demandés par le sujet pour les requêtes SQL -->
+    <div style="margin: 15px 0">
+      <button onclick="chargerPatients()" style="padding: 8px">
+        Display All (Read)
+      </button>
+      <button onclick="chargerFiltre3Conditions()" style="padding: 8px">
+        Filter (3 Conditions)
+      </button>
+      <button onclick="chargerStats()" style="padding: 8px">
+        Statistics (Average / Total)
+      </button>
+    </div>
+
+    <a class="accueil" href="accueil.html">Home Page</a>
+  </body>
+</html>

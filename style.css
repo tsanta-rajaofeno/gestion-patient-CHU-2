@@ -1,0 +1,154 @@
+body > table {
+  width: 80%;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 95%;
+  border-collapse: collapse;
+}
+table.list {
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(even),
+table.list thead > tr {
+  background-color: rgb(216, 241, 249);
+}
+
+td.left {
+  width: 25%;
+  vertical-align: top;
+}
+
+td.right {
+  width: 75%;
+  vertical-align: top;
+}
+
+tbody {
+  max-height: 400px; /* Adjust height as needed */
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  position: relative;
+}
+
+tbody::-webkit-scrollbar {
+  width: 10px;
+  background: #ffffff; /* White track background */
+}
+
+tbody::-webkit-scrollbar-thumb {
+  background: #999999; /* Gray draggable thumb */
+  border-radius: 5px;
+}
+
+tbody::-webkit-scrollbar-thumb:hover {
+  background: #777777;
+}
+
+.language {
+  width: 3%;
+  text-align: center;
+  margin: 10px;
+}
+
+.language a {
+  display: grid;
+  padding: 1px 3px;
+  text-decoration: none;
+  border: 1px solid gray;
+  color: black;
+  margin: 0 4px;
+  border-radius: 5px;
+}
+
+/* .language a.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.language a.disabled {
+  color: #dddddd;
+  cursor: not-allowed;
+  pointer-events: none;
+} */
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="date"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="submit"] {
+  width: 30%;
+  background-color: rgb(216, 241, 249);
+  color: #000;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form div.form-action-buttons {
+  text-align: center;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #0000ee;
+  margin-right: 4px;
+}
+
+label.validation-error {
+  color: red;
+  margin-left: 5px;
+}
+
+.edit {
+  color: lightslategray;
+}
+
+.delete {
+  color: red;
+}
+
+.hide {
+  display: none;
+}
+
+.accueil {
+  text-align: center;
+  display: block;
+}
+
+.accueil:link {
+  color: cadetblue;
+}
+
+.accueil:visited {
+  color: cornflowerblue;
+}
