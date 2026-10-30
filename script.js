@@ -1,11 +1,44 @@
 let selectedRow = null;
+let currentPatientId = null; 
+
+window.onload = function() {
+    chargerPatients();
+};
+
+function chargerPatients() {
+    fetch('/api/patients')
+        .then(res => res.json())
+        .then(data => {
+            let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
+            table.innerHTML = "";
+            data.forEach(p => insertNewRecordFromDB(p));
+        })
+        .catch(err => console.error("Erreur:", err));
+}
 
 function onFormsubmit() {
-  let formData = readFromData();
-  if (selectedRow == null) insertNewRecord(formData);
-  else updateRecord(formData);
-  resetForm();
-  searchTable();
+    let formData = readFromData();
+    
+    let url = '/api/patients';
+    let method = 'POST';
+
+    if (currentPatientId !== null) {
+        url = `/api/patients/${currentPatientId}`;
+        method = 'PUT';
+    }
+
+    fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(response => {
+        resetForm();
+        currentPatientId = null;
+        chargerPatients();
+    })
+    .catch(err => console.error("Erreur:", err));
 }
 
 function readFromData() {
@@ -22,32 +55,34 @@ function readFromData() {
   return formData;
 }
 
-function insertNewRecord(data) {
+function insertNewRecordFromDB(data) {
   let table = document
     .getElementById("patient_liste")
     .getElementsByTagName("tbody")[0];
   let newRow = table.insertRow(table.length);
-  cell1 = newRow.insertCell(0);
-  cell1.innerHTML = data.nom;
-  cell2 = newRow.insertCell(1);
-  cell2.innerHTML = data.prenom;
-  cell3 = newRow.insertCell(2);
-  cell3.innerHTML = data.age;
-  cell4 = newRow.insertCell(3);
-  cell4.innerHTML = data.addresse;
-  cell5 = newRow.insertCell(4);
-  cell5.innerHTML = data.maladie;
-  cell6 = newRow.insertCell(5);
-  cell6.innerHTML = data.phone;
-  cell7 = newRow.insertCell(6);
-  cell7.innerHTML = data.date_entree;
-  cell7 = newRow.insertCell(7);
-  cell7.innerHTML = data.sejours;
-  cell8 = newRow.insertCell(8);
-  cell8.innerHTML = data.sex;
-  cell9 = newRow.insertCell(9);
-  cell9.innerHTML = `<a class="edit" onclick="editRecord(this)">Edit</a>
-                     <a class="delete" onclick="deleteRecord(this)">Delete</a>`;
+  newRow.dataset.id = data.id; 
+  
+  let cell1 = newRow.insertCell(0);
+  cell1.textContent = data.nom;
+  let cell2 = newRow.insertCell(1);
+  cell2.textContent = data.prenom;
+  let cell3 = newRow.insertCell(2);
+  cell3.textContent = data.age;
+  let cell4 = newRow.insertCell(3);
+  cell4.textContent = data.addresse;
+  let cell5 = newRow.insertCell(4);
+  cell5.textContent = data.maladie;
+  let cell6 = newRow.insertCell(5);
+  cell6.textContent = data.phone;
+  let cell7 = newRow.insertCell(6);
+  cell7.textContent = data.date_entree;
+  let cell8 = newRow.insertCell(7);
+  cell8.textContent = data.sejours;
+  let cell9 = newRow.insertCell(8);
+  cell9.textContent = data.sex;
+  let cell10 = newRow.insertCell(9);
+  cell10.innerHTML = `<a class="edit" onclick="editRecord(this)">Edit</a>
+                      <a class="delete" onclick="deleteRecord(this)">Delete</a>`;
 }
 
 function resetForm() {
@@ -61,38 +96,41 @@ function resetForm() {
   document.getElementById("sejours").value = "";
   document.getElementById("sex").value = "";
   selectedRow = null;
+  currentPatientId = null;
 }
 
 function editRecord(td) {
   selectedRow = td.parentElement.parentElement;
-  document.getElementById("nom").value = selectedRow.cells[0].innerHTML;
-  document.getElementById("prenom").value = selectedRow.cells[1].innerHTML;
-  document.getElementById("age").value = selectedRow.cells[2].innerHTML;
-  document.getElementById("addresse").value = selectedRow.cells[3].innerHTML;
-  document.getElementById("maladie").value = selectedRow.cells[4].innerHTML;
-  document.getElementById("phone").value = selectedRow.cells[5].innerHTML;
-  document.getElementById("date_entree").value = selectedRow.cells[6].innerHTML;
-  document.getElementById("sejours").value = selectedRow.cells[7].innerHTML;
-  document.getElementById("sex").value = selectedRow.cells[8].innerHTML;
+  currentPatientId = selectedRow.dataset.id; 
+  
+  // Utilisation de textContent pour récupérer uniquement le texte brut sans balises HTML
+  document.getElementById("nom").value = selectedRow.cells[0].textContent;
+  document.getElementById("prenom").value = selectedRow.cells[1].textContent;
+  document.getElementById("age").value = selectedRow.cells[2].textContent;
+  document.getElementById("addresse").value = selectedRow.cells[3].textContent;
+  document.getElementById("maladie").value = selectedRow.cells[4].textContent;
+  document.getElementById("phone").value = selectedRow.cells[5].textContent;
+  document.getElementById("date_entree").value = selectedRow.cells[6].textContent;
+  document.getElementById("sejours").value = selectedRow.cells[7].textContent;
+  document.getElementById("sex").value = selectedRow.cells[8].textContent;
 }
 
 function updateRecord(formData) {
-  selectedRow.cells[0].innerHTML = formData.nom;
-  selectedRow.cells[1].innerHTML = formData.prenom;
-  selectedRow.cells[2].innerHTML = formData.age;
-  selectedRow.cells[3].innerHTML = formData.addresse;
-  selectedRow.cells[4].innerHTML = formData.maladie;
-  selectedRow.cells[5].innerHTML = formData.phone;
-  selectedRow.cells[6].innerHTML = formData.date_entree;
-  selectedRow.cells[7].innerHTML = formData.sejours;
-  selectedRow.cells[8].innerHTML = formData.sex;
+  
 }
 
 function deleteRecord(td) {
   if (confirm("Are you sure to delete this record ?")) {
-    row = td.parentElement.parentElement;
-    document.getElementById("patient_liste").deleteRow(row.rowIndex);
-    resetForm();
+    let row = td.parentElement.parentElement;
+    let id = row.dataset.id;
+
+    fetch(`/api/patients/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => {
+            chargerPatients();
+            resetForm();
+        })
+        .catch(err => console.error("Erreur:", err));
   }
 }
 
@@ -104,7 +142,7 @@ function searchTable() {
   for (let i = 0; i < tr.length; i++) {
     let td = tr[i].getElementsByTagName("td");
     for (let j = 0; j < td.length; j++) {
-      if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+      if (td[j].textContent.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
         break;
       } else {
@@ -112,4 +150,24 @@ function searchTable() {
       }
     }
   }
+}
+
+function chargerFiltre3Conditions() {
+    fetch('/api/patients/filtre')
+        .then(res => res.json())
+        .then(data => {
+            let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
+            table.innerHTML = "";
+            data.forEach(p => insertNewRecordFromDB(p));
+        })
+        .catch(err => console.error("Erreur filtre:", err));
+}
+
+function chargerStats() {
+    fetch('/api/patients/stats')
+        .then(res => res.json())
+        .then(stat => {
+            alert(`Statistiques de l'hôpital :\n- Âge moyen : ${Math.round(stat.moyenne_age || 0)} ans\n- Âge minimum : ${stat.age_min || 0} ans\n- Total patients : ${stat.total_patients}`);
+        })
+        .catch(err => console.error("Erreur stats:", err));
 }

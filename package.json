@@ -1,0 +1,26 @@
+{
+  "name": "gestion-patient-chu-2",
+  "version": "1.0.0",
+  "description": "JS's CRUD",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsanta-rajaofeno/gestion-patient-CHU-2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tsanta-rajaofeno/gestion-patient-CHU-2/issues"
+  },
+  "homepage": "https://github.com/tsanta-rajaofeno/gestion-patient-CHU-2#readme",
+  "dependencies": {
+    "express": "^5.3.0",
+    "sqlite3": "^6.0.1"
+  }
+}
