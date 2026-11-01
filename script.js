@@ -1,48 +1,51 @@
 let selectedRow = null;
-let currentPatientId = null; 
+let currentPatientId = null;
 
-window.onload = function() {
-    chargerPatients();
+window.onload = function () {
+  chargerPatients();
 };
 
 function chargerPatients() {
-    fetch('/api/patients')
-        .then(res => res.json())
-        .then(data => {
-            let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
-            table.innerHTML = "";
-            data.forEach(p => insertNewRecordFromDB(p));
-        })
-        .catch(err => console.error("Erreur:", err));
+  fetch("/api/patients")
+    .then((res) => res.json())
+    .then((data) => {
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
+      table.innerHTML = "";
+      data.forEach((p) => insertNewRecordFromDB(p));
+    })
+    .catch((err) => console.error("Erreur:", err));
 }
 
 function onFormsubmit() {
-    let formData = readFromData();
-    
-    let url = '/api/patients';
-    let method = 'POST';
+  let formData = readFromData();
 
-    if (currentPatientId !== null) {
-        url = `/api/patients/${currentPatientId}`;
-        method = 'PUT';
-    }
+  let url = "/api/patients";
+  let method = "POST";
 
-    fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+  if (currentPatientId !== null) {
+    url = `/api/patients/${currentPatientId}`;
+    method = "PUT";
+  }
+
+  fetch(url, {
+    method: method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      resetForm();
+      currentPatientId = null;
+      chargerPatients();
     })
-    .then(res => res.json())
-    .then(response => {
-        resetForm();
-        currentPatientId = null;
-        chargerPatients();
-    })
-    .catch(err => console.error("Erreur:", err));
+    .catch((err) => console.error("Erreur:", err));
 }
 
 function readFromData() {
   let formData = {};
+  formData["bloc"] = document.getElementById("bloc").value;
   formData["nom"] = document.getElementById("nom").value;
   formData["prenom"] = document.getElementById("prenom").value;
   formData["age"] = document.getElementById("age").value;
@@ -60,32 +63,35 @@ function insertNewRecordFromDB(data) {
     .getElementById("patient_liste")
     .getElementsByTagName("tbody")[0];
   let newRow = table.insertRow(table.length);
-  newRow.dataset.id = data.id; 
-  
+  newRow.dataset.id = data.id;
+
   let cell1 = newRow.insertCell(0);
-  cell1.textContent = data.nom;
+  cell1.textContent = data.bloc;
   let cell2 = newRow.insertCell(1);
-  cell2.textContent = data.prenom;
+  cell2.textContent = data.nom;
   let cell3 = newRow.insertCell(2);
-  cell3.textContent = data.age;
+  cell3.textContent = data.prenom;
   let cell4 = newRow.insertCell(3);
-  cell4.textContent = data.addresse;
+  cell4.textContent = data.age;
   let cell5 = newRow.insertCell(4);
-  cell5.textContent = data.maladie;
+  cell5.textContent = data.addresse;
   let cell6 = newRow.insertCell(5);
-  cell6.textContent = data.phone;
+  cell6.textContent = data.maladie;
   let cell7 = newRow.insertCell(6);
-  cell7.textContent = data.date_entree;
+  cell7.textContent = data.phone;
   let cell8 = newRow.insertCell(7);
-  cell8.textContent = data.sejours;
+  cell8.textContent = data.date_entree;
   let cell9 = newRow.insertCell(8);
-  cell9.textContent = data.sex;
+  cell9.textContent = data.sejours;
   let cell10 = newRow.insertCell(9);
-  cell10.innerHTML = `<a class="edit" onclick="editRecord(this)">Edit</a>
-                      <a class="delete" onclick="deleteRecord(this)">Delete</a>`;
+  cell10.textContent = data.sex;
+  let cell11 = newRow.insertCell(10);
+  cell11.innerHTML = `<a class="edit" onclick="editRecord(this)">Modifier</a>
+                      <a class="delete" onclick="deleteRecord(this)">Effacer</a>`;
 }
 
 function resetForm() {
+  document.getElementById("bloc").value = "";
   document.getElementById("nom").value = "";
   document.getElementById("prenom").value = "";
   document.getElementById("age").value = "";
@@ -101,36 +107,36 @@ function resetForm() {
 
 function editRecord(td) {
   selectedRow = td.parentElement.parentElement;
-  currentPatientId = selectedRow.dataset.id; 
-  
+  currentPatientId = selectedRow.dataset.id;
+
   // Utilisation de textContent pour récupérer uniquement le texte brut sans balises HTML
-  document.getElementById("nom").value = selectedRow.cells[0].textContent;
-  document.getElementById("prenom").value = selectedRow.cells[1].textContent;
-  document.getElementById("age").value = selectedRow.cells[2].textContent;
-  document.getElementById("addresse").value = selectedRow.cells[3].textContent;
-  document.getElementById("maladie").value = selectedRow.cells[4].textContent;
-  document.getElementById("phone").value = selectedRow.cells[5].textContent;
-  document.getElementById("date_entree").value = selectedRow.cells[6].textContent;
-  document.getElementById("sejours").value = selectedRow.cells[7].textContent;
-  document.getElementById("sex").value = selectedRow.cells[8].textContent;
+  document.getElementById("bloc").value = selectedRow.cells[0].textContent;
+  document.getElementById("nom").value = selectedRow.cells[1].textContent;
+  document.getElementById("prenom").value = selectedRow.cells[2].textContent;
+  document.getElementById("age").value = selectedRow.cells[3].textContent;
+  document.getElementById("addresse").value = selectedRow.cells[4].textContent;
+  document.getElementById("maladie").value = selectedRow.cells[5].textContent;
+  document.getElementById("phone").value = selectedRow.cells[6].textContent;
+  document.getElementById("date_entree").value =
+    selectedRow.cells[7].textContent;
+  document.getElementById("sejours").value = selectedRow.cells[8].textContent;
+  document.getElementById("sex").value = selectedRow.cells[9].textContent;
 }
 
-function updateRecord(formData) {
-  
-}
+function updateRecord(formData) {}
 
 function deleteRecord(td) {
   if (confirm("Are you sure to delete this record ?")) {
     let row = td.parentElement.parentElement;
     let id = row.dataset.id;
 
-    fetch(`/api/patients/${id}`, { method: 'DELETE' })
-        .then(res => res.json())
-        .then(() => {
-            chargerPatients();
-            resetForm();
-        })
-        .catch(err => console.error("Erreur:", err));
+    fetch(`/api/patients/${id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(() => {
+        chargerPatients();
+        resetForm();
+      })
+      .catch((err) => console.error("Erreur:", err));
   }
 }
 
@@ -153,21 +159,25 @@ function searchTable() {
 }
 
 function chargerFiltre3Conditions() {
-    fetch('/api/patients/filtre')
-        .then(res => res.json())
-        .then(data => {
-            let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
-            table.innerHTML = "";
-            data.forEach(p => insertNewRecordFromDB(p));
-        })
-        .catch(err => console.error("Erreur filtre:", err));
+  fetch("/api/patients/filtre")
+    .then((res) => res.json())
+    .then((data) => {
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
+      table.innerHTML = "";
+      data.forEach((p) => insertNewRecordFromDB(p));
+    })
+    .catch((err) => console.error("Erreur filtre:", err));
 }
 
 function chargerStats() {
-    fetch('/api/patients/stats')
-        .then(res => res.json())
-        .then(stat => {
-            alert(`Statistiques de l'hôpital :\n- Âge moyen : ${Math.round(stat.moyenne_age || 0)} ans\n- Âge minimum : ${stat.age_min || 0} ans\n- Total patients : ${stat.total_patients}`);
-        })
-        .catch(err => console.error("Erreur stats:", err));
+  fetch("/api/patients/stats")
+    .then((res) => res.json())
+    .then((stat) => {
+      alert(
+        `Statistiques de l'hôpital :\n- Âge moyen : ${Math.round(stat.moyenne_age || 0)} ans\n- Âge maximum : ${stat.age_max || 0} ans\n- Âge minimum : ${stat.age_min || 0} ans\n- Total patients : ${stat.total_patients}`,
+      );
+    })
+    .catch((err) => console.error("Erreur stats:", err));
 }

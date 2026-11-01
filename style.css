@@ -47,19 +47,19 @@ tbody {
   position: relative;
 }
 
-tbody::-webkit-scrollbar {
+/* tbody::-webkit-scrollbar {
   width: 10px;
-  background: #ffffff; /* White track background */
+  background: #ffffff;
 }
 
 tbody::-webkit-scrollbar-thumb {
-  background: #999999; /* Gray draggable thumb */
+  background: #999999;
   border-radius: 5px;
 }
 
 tbody::-webkit-scrollbar-thumb:hover {
   background: #777777;
-}
+} */
 
 .language {
   width: 3%;

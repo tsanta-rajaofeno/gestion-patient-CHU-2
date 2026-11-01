@@ -22,12 +22,23 @@
                 id="patientForm"
               >
                 <div>
+                  <label for="nom">N° bloc:</label>
+                  <input
+                    type="text"
+                    name="bloc"
+                    id="bloc"
+                    placeholder="A1"
+                    required
+                  />
+                </div>
+
+                <div>
                   <label for="nom">Nom:</label>
                   <input
                     type="text"
                     name="nom"
                     id="nom"
-                    placeholder="Nom"
+                    placeholder="RAKOTO"
                     required
                   />
                 </div>
@@ -38,7 +49,7 @@
                     type="text"
                     name="prenom"
                     id="prenom"
-                    placeholder="Prénom"
+                    placeholder="Rakoto"
                     required
                   />
                 </div>
@@ -49,7 +60,7 @@
                     type="number"
                     name="age"
                     id="age"
-                    placeholder="Age"
+                    placeholder="30"
                     required
                   />
                 </div>
@@ -60,7 +71,7 @@
                     type="text"
                     name="addresse"
                     id="addresse"
-                    placeholder="Adresse"
+                    placeholder="Quartier Ville"
                     required
                   />
                 </div>
@@ -82,7 +93,7 @@
                     type="tel"
                     name="phone"
                     id="phone"
-                    placeholder="Téléphone"
+                    placeholder="0340000000"
                     required
                   />
                 </div>
@@ -98,7 +109,7 @@
                 </div>
 
                 <div>
-                  <label for="sejours">Séjours éstimé(jours):</label>
+                  <label for="sejours">Séjours éstimés(jours):</label>
                   <input
                     type="number"
                     name="sejours"
@@ -127,14 +138,15 @@
               <table class="list" id="patient_liste">
                 <thead>
                   <tr>
+                    <th>Bloc</th>
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Age</th>
                     <th>Adresse</th>
                     <th>Maladie</th>
                     <th>Téléphone</th>
-                    <th>S/E(j)</th>
                     <th>D/E</th>
+                    <th>S/E(j)</th>
                     <th>Sexe</th>
                     <th></th>
                   </tr>
