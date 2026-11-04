@@ -171,16 +171,22 @@
       placeholder="Find a patient..."
     />
     <script src="script_en.js"></script>
-    <!-- Boutons demandés par le sujet pour les requêtes SQL -->
+    <!-- Boutons des requêtes SQL -->
     <div style="margin: 15px 0">
       <button onclick="chargerPatients()" style="padding: 8px">
-        Display All (Read)
+        Afficher tout (Read)
       </button>
-      <button onclick="chargerFiltre3Conditions()" style="padding: 8px">
-        Filter (3 Conditions)
+      <button onclick="chargerFiltrePlus25()" style="padding: 8px">
+        Filtrer (> 25 ans)
+      </button>
+      <button onclick="chargerFiltreMoins25()" style="padding: 8px">
+        Filtrer (< 25 ans)
+      </button>
+      <button onclick="chargerFiltreSejoursMoins5()" style="padding: 8px">
+        Filtrer (< 5 jours)
       </button>
       <button onclick="chargerStats()" style="padding: 8px">
-        Statistics (Average / Total)
+        Statistiques (Moyenne / Total)
       </button>
     </div>
 

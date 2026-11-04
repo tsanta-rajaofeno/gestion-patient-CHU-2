@@ -158,8 +158,8 @@ function searchTable() {
   }
 }
 
-function chargerFiltre3Conditions() {
-  fetch("/api/patients/filtre")
+function chargerFiltrePlus25() {
+  fetch("/api/patients/filtre/plus-25")
     .then((res) => res.json())
     .then((data) => {
       let table = document
@@ -168,7 +168,33 @@ function chargerFiltre3Conditions() {
       table.innerHTML = "";
       data.forEach((p) => insertNewRecordFromDB(p));
     })
-    .catch((err) => console.error("Erreur filtre:", err));
+    .catch((err) => console.error("Erreur filtre plus de 25 ans:", err));
+}
+
+function chargerFiltreMoins25() {
+  fetch("/api/patients/filtre/moins-25")
+    .then((res) => res.json())
+    .then((data) => {
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
+      table.innerHTML = "";
+      data.forEach((p) => insertNewRecordFromDB(p));
+    })
+    .catch((err) => console.error("Erreur filtre moins de 25 ans:", err));
+}
+
+function chargerFiltreSejoursMoins5() {
+  fetch("/api/patients/filtre/sejours-moins-5")
+    .then((res) => res.json())
+    .then((data) => {
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
+      table.innerHTML = "";
+      data.forEach((p) => insertNewRecordFromDB(p));
+    })
+    .catch((err) => console.error("Erreur filtre séjours < 5 jours:", err));
 }
 
 function chargerStats() {

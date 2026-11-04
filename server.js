@@ -110,8 +110,27 @@ app.delete("/api/patients/:id", (req, res) => {
   });
 });
 
-app.get("/api/patients/filtre", (req, res) => {
-  const query = `SELECT * FROM patients WHERE age > 25 AND addresse = 'Antananarivo' AND sex = 'M';`;
+// Filtre : Patients de plus de 25 ans
+app.get("/api/patients/filtre/plus-25", (req, res) => {
+  const query = `SELECT * FROM patients WHERE age > 25;`;
+  db.all(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Filtre : Patients de moins de 25 ans
+app.get("/api/patients/filtre/moins-25", (req, res) => {
+  const query = `SELECT * FROM patients WHERE age < 25;`;
+  db.all(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Filtre : Séjours de moins de 5 jours
+app.get("/api/patients/filtre/sejours-moins-5", (req, res) => {
+  const query = `SELECT * FROM patients WHERE sejours < 5;`;
   db.all(query, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
