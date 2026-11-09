@@ -8,6 +8,45 @@
     <link rel="icon" href="logo_chu.jpg" type="image/x-icon" />
   </head>
   <body>
+    <!-- Static Top Header -->
+    <div class="top-sticky-header">
+      <input
+        type="text"
+        id="searchInput"
+        onkeyup="searchTable()"
+        placeholder="Find a patient..."
+      />
+      <div class="sql-buttons-container">
+        <button onclick="chargerPatients()" style="padding: 8px">
+          Afficher tout (Read)
+        </button>
+
+        <!-- DYNAMIC FILTER PANEL -->
+        <div class="filter-panel">
+          <select id="critereFiltre">
+            <option value="age">By Age</option>
+            <option value="sejours">By Stay (days)</option>
+          </select>
+
+          <select id="operateurFiltre">
+            <option value="superieur">Greater than (>)</option>
+            <option value="inferieur">Less than (<)</option>
+          </select>
+
+          <input type="number" id="valeurFiltre" placeholder="ex: 25" />
+
+          <button onclick="appliquerFiltreDynamique()" class="btn-filter">
+            Filter
+          </button>
+        </div>
+
+        <button onclick="chargerStats()" style="padding: 8px">
+          Statistics (Average / Total)
+        </button>
+        <a class="accueil" href="accueil.html" style="display: inline-block; margin-left: 10px;">Home Page</a>
+      </div>
+    </div>
+
     <div class="flex-container">
       <table id="patientTable">
         <thead>
@@ -21,15 +60,39 @@
                 autocomplete="off"
                 id="patientForm"
               >
+                <!-- ASSIGNMENT SELECT -->
                 <div>
-                  <label for="nom">N° box:</label>
-                  <input
-                    type="text"
-                    name="bloc"
-                    id="bloc"
-                    placeholder="A1"
-                    required
-                  />
+                  <label for="bloc">Assignment:</label>
+                  <select name="bloc" id="bloc" required>
+                    <option value="">-- Select Assignment --</option>
+                    
+                    <optgroup label="Public Ward (Wards A1 - A8)">
+                      <option value="A1">Ward A1</option>
+                      <option value="A2">Ward A2</option>
+                      <option value="A3">Ward A3</option>
+                      <option value="A4">Ward A4</option>
+                      <option value="A5">Ward A5</option>
+                      <option value="A6">Ward A6</option>
+                      <option value="A7">Ward A7</option>
+                      <option value="A8">Ward A8</option>
+                    </optgroup>
+
+                    <optgroup label="Private Block (Rooms B1 - B6)">
+                      <option value="B1">Private Room B1</option>
+                      <option value="B2">Private Room B2</option>
+                      <option value="B3">Private Room B3</option>
+                      <option value="B4">Private Room B4</option>
+                      <option value="B5">Private Room B5</option>
+                      <option value="B6">Private Room B6</option>
+                    </optgroup>
+
+                    <optgroup label="Consultation Offices">
+                      <option value="Porte 1">Office - Door 1</option>
+                      <option value="Porte 2">Office - Door 2</option>
+                      <option value="Porte 3">Office - Door 3</option>
+                      <option value="Porte 4">Office - Door 4</option>
+                    </optgroup>
+                  </select>
                 </div>
 
                 <div>
@@ -164,32 +227,6 @@
       </div>
     </div>
 
-    <input
-      type="text"
-      id="searchInput"
-      onkeyup="searchTable()"
-      placeholder="Find a patient..."
-    />
     <script src="script_en.js"></script>
-    <!-- Boutons des requêtes SQL -->
-    <div style="margin: 15px 0">
-      <button onclick="chargerPatients()" style="padding: 8px">
-        Afficher tout (Read)
-      </button>
-      <button onclick="chargerFiltrePlus25()" style="padding: 8px">
-        Filtrer (> 25 ans)
-      </button>
-      <button onclick="chargerFiltreMoins25()" style="padding: 8px">
-        Filtrer (< 25 ans)
-      </button>
-      <button onclick="chargerFiltreSejoursMoins5()" style="padding: 8px">
-        Filtrer (< 5 jours)
-      </button>
-      <button onclick="chargerStats()" style="padding: 8px">
-        Statistiques (Moyenne / Total)
-      </button>
-    </div>
-
-    <a class="accueil" href="accueil.html">Home Page</a>
   </body>
 </html>

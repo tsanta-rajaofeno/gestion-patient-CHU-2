@@ -31,6 +31,8 @@ table.list thead > tr {
 td.left {
   width: 25%;
   vertical-align: top;
+  position: sticky;
+  top: 90px; /* Reste fixe sous l'en-tête de recherche lorsqu'on défile */
 }
 
 td.right {
@@ -39,27 +41,13 @@ td.right {
 }
 
 tbody {
-  max-height: 400px; /* Adjust height as needed */
+  max-height: 400px;
   overflow-y: auto;
   background: #ffffff;
   border: 1px solid #ccc;
   border-radius: 8px;
   position: relative;
 }
-
-/* tbody::-webkit-scrollbar {
-  width: 10px;
-  background: #ffffff;
-}
-
-tbody::-webkit-scrollbar-thumb {
-  background: #999999;
-  border-radius: 5px;
-}
-
-tbody::-webkit-scrollbar-thumb:hover {
-  background: #777777;
-} */
 
 .language {
   width: 3%;
@@ -77,21 +65,11 @@ tbody::-webkit-scrollbar-thumb:hover {
   border-radius: 5px;
 }
 
-/* .language a.active {
-  background-color: #4caf50;
-  color: white;
-}
-
-.language a.disabled {
-  color: #dddddd;
-  cursor: not-allowed;
-  pointer-events: none;
-} */
-
 input[type="text"],
 input[type="number"],
 input[type="tel"],
-input[type="date"] {
+input[type="date"],
+select {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -99,6 +77,7 @@ input[type="date"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: #fff;
 }
 
 input[type="submit"] {
@@ -151,4 +130,105 @@ label.validation-error {
 
 .accueil:visited {
   color: cornflowerblue;
+}
+
+/* Sélection et survol des lignes */
+tr.selected-row {
+  background-color: #b3d7ff !important;
+}
+
+#patient_liste tbody tr:hover {
+  background-color: #e9f5ff;
+  cursor: pointer;
+}
+
+/* Boutons d'action tableau */
+.btn-edit,
+.btn-delete {
+  padding: 6px 12px;
+  margin: 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #138496;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #bd2130;
+}
+
+/* EN-TÊTE SUPÉRIEUR STATIQUE */
+.top-sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 1000;
+  padding: 10px 0;
+  border-bottom: 2px solid #dddddd;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sql-buttons-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+/* PANNEAU DE FILTRAGE DYNAMIQUE (Haut) */
+.filter-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+}
+
+.filter-panel select,
+.filter-panel input {
+  width: auto;
+  padding: 6px;
+  margin: 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.filter-panel input {
+  width: 70px;
+}
+
+.btn-filter {
+  padding: 6px 12px;
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.btn-filter:hover {
+  background-color: #0369a1;
 }
