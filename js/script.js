@@ -1,68 +1,111 @@
 let selectedRow = null;
 
-// Load all patients on start or when clicking "Afficher tout"
+document.addEventListener("keydown", function (e) {
+  const key = e.key.toLowerCase();
+
+  // Ctrl + F -> Trigger "Filtrer"
+  if (e.ctrlKey && !e.shiftKey && !e.altKey && key === "f") {
+    e.preventDefault();
+    appliquerFiltreDynamique();
+  }
+
+  // Ctrl + Z -> Trigger "Afficher tout"
+  if (e.ctrlKey && !e.shiftKey && !e.altKey && key === "z") {
+    e.preventDefault();
+    chargerPatients();
+  }
+});
+
+// Block minus, plus, decimal point, and scientific notation keys
+function blockNonIntegers(event) {
+  if (["-", "+", ".", ",", "e", "E"].includes(event.key)) {
+    event.preventDefault();
+  }
+}
+
+// Clean up pasted or dragged values (e.g., "-10" or "3.5")
+function sanitizeIntegerInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, "");
+}
+
+// Charger tous les patients au démarrage ou lors du clic sur "Afficher tout"
 function chargerPatients() {
   fetch("/api/patients")
     .then((res) => res.json())
     .then((data) => {
-      let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
-      table.innerHTML = "";
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
+      table.innerHTML = ""; // Vider le tableau avant de recharger
       data.forEach((p) => insertNewRecordFromDB(p));
     })
-    .catch((err) => console.error("Error loading patients:", err));
+    .catch((err) => console.error("Erreur chargement patients:", err));
 }
 
-// Load statistics
+// Charger les statistiques (Moyenne / Total)
 function chargerStats() {
   fetch("/api/patients/stats")
     .then((res) => res.json())
     .then((data) => {
       alert(
-        `CHU ANDRAINJATO STATISTICS:\n\n` +
-        `- Total Patients: ${data.total_patients}\n` +
-        `- Average Age: ${Math.round(data.moyenne_age || 0)} years\n` +
-        `- Oldest Patient: ${data.age_max || 0} years\n` +
-        `- Youngest Patient: ${data.age_min || 0} years`
+        `STATISTIQUES DU CHU :\n\n` +
+          `- Total des patients : ${data.total_patients}\n` +
+          `- Âge moyen : ${Math.round(data.moyenne_age || 0)} ans\n` +
+          `- Patient le plus âgé : ${data.age_max || 0} ans\n` +
+          `- Patient le plus jeune : ${data.age_min || 0} ans`,
       );
     })
-    .catch((err) => console.error("Error loading stats:", err));
+    .catch((err) => console.error("Erreur stats:", err));
 }
 
-// DYNAMIC FILTERING (Age / Stay with greater / less than operators)
+// FILTRAGE DYNAMIQUE (Âge / Séjour avec opérateur supérieur / inférieur)
 function appliquerFiltreDynamique() {
   let critere = document.getElementById("critereFiltre").value;
   let operateur = document.getElementById("operateurFiltre").value;
-  let valeur = document.getElementById("valeurFiltre").value;
+  let rawValeur = document.getElementById("valeurFiltre").value.trim();
 
-  if (valeur === "") {
-    alert("Please enter a value to filter!");
+  // Check for empty or non-digit integer string
+  if (rawValeur === "" || !/^\d+$/.test(rawValeur)) {
+    alert("Veuillez saisir un entier naturel valide (0 ou plus) !");
     return;
   }
 
+  let valeur = parseInt(rawValeur, 10);
   let url = `/api/patients/filtrer-avance?critere=${critere}&operateur=${operateur}&valeur=${valeur}`;
 
   fetch(url)
-    .then((res) => res.json())
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur lors du filtrage");
+      return data;
+    })
     .then((data) => {
-      let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
+      let table = document
+        .getElementById("patient_liste")
+        .getElementsByTagName("tbody")[0];
       table.innerHTML = "";
+
       if (data.length === 0) {
-        alert("No patients match this filter.");
+        alert("Aucun patient ne correspond à ce critère.");
         chargerPatients();
         return;
       }
+
       data.forEach((p) => insertNewRecordFromDB(p));
     })
-    .catch((err) => console.error("Error with dynamic filter:", err));
+    .catch((err) => {
+      console.error("Erreur filtre dynamique:", err);
+      alert("Erreur : " + err.message);
+    });
 }
 
-// Form Submission (Insert or Update)
+// Soumission du formulaire (Ajout ou Modification)
 function onFormsubmit() {
   if (validate()) {
     let formData = readFormData();
-    
+
     if (selectedRow === null) {
-      // INSERT (POST)
+      // INSERTION (POST)
       fetch("/api/patients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,7 +113,8 @@ function onFormsubmit() {
       })
         .then(async (res) => {
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Error during registration");
+          if (!res.ok)
+            throw new Error(data.error || "Erreur lors de l'enregistrement");
           return data;
         })
         .then((data) => {
@@ -78,9 +122,9 @@ function onFormsubmit() {
           resetForm();
           alert(data.message);
         })
-        .catch((err) => alert("Error: " + err.message));
+        .catch((err) => alert("Erreur : " + err.message));
     } else {
-      // UPDATE (PUT)
+      // MODIFICATION (PUT)
       let id = selectedRow.dataset.id;
       fetch(`/api/patients/${id}`, {
         method: "PUT",
@@ -89,7 +133,8 @@ function onFormsubmit() {
       })
         .then(async (res) => {
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Error during update");
+          if (!res.ok)
+            throw new Error(data.error || "Erreur lors de la modification");
           return data;
         })
         .then((data) => {
@@ -97,12 +142,12 @@ function onFormsubmit() {
           resetForm();
           alert(data.message);
         })
-        .catch((err) => alert("Error: " + err.message));
+        .catch((err) => alert("Erreur : " + err.message));
     }
   }
 }
 
-// Read form data
+// Lire les données du formulaire
 function readFormData() {
   let formData = {};
   formData["bloc"] = document.getElementById("bloc").value;
@@ -118,15 +163,17 @@ function readFormData() {
   return formData;
 }
 
-// Insert record into HTML table (with direct row click support)
+// Insérer un enregistrement venant de la BDD dans le tableau HTML (avec clic direct sur la ligne)
 function insertNewRecordFromDB(data) {
-  let table = document.getElementById("patient_liste").getElementsByTagName("tbody")[0];
+  let table = document
+    .getElementById("patient_liste")
+    .getElementsByTagName("tbody")[0];
   let newRow = table.insertRow(table.length);
   newRow.dataset.id = data.id;
 
-  // DIRECT ROW CLICK: Selects and pre-fills the form (unless clicking a button)
+  // CLIC DIRECT SUR LA LIGNE : Sélectionne et pré-remplit le formulaire (sauf si on clique sur un bouton)
   newRow.onclick = function (e) {
-    if (e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === "BUTTON") return;
     selectRow(this);
     remplirFormulaireDepuisLigne(this);
   };
@@ -141,13 +188,13 @@ function insertNewRecordFromDB(data) {
   newRow.insertCell(7).innerHTML = data.date_entree;
   newRow.insertCell(8).innerHTML = data.sejours;
   newRow.insertCell(9).innerHTML = data.sex;
-  
+
   let cellAction = newRow.insertCell(10);
-  cellAction.innerHTML = `<button class="btn-edit" onclick="onEdit(this)">Edit</button> 
-                          <button class="btn-delete" onclick="onDelete(this)">Delete</button>`;
+  cellAction.innerHTML = `<button class="btn-edit" onclick="onEdit(this)">Modifier</button> 
+                          <button class="btn-delete" onclick="onDelete(this)">Supprimer</button>`;
 }
 
-// Dedicated function to fill the form from the clicked row
+// Fonction dédiée pour injecter les cellules de la ligne cliquée dans le formulaire
 function remplirFormulaireDepuisLigne(row) {
   selectedRow = row;
   document.getElementById("bloc").value = row.cells[0].innerHTML;
@@ -162,9 +209,11 @@ function remplirFormulaireDepuisLigne(row) {
   document.getElementById("sex").value = row.cells[9].innerHTML;
 }
 
-// Row selection visual
+// Sélection visuelle d'une ligne
 function selectRow(row) {
-  let rows = document.getElementById("patient_liste").getElementsByTagName("tr");
+  let rows = document
+    .getElementById("patient_liste")
+    .getElementsByTagName("tr");
   for (let i = 0; i < rows.length; i++) {
     rows[i].classList.remove("selected-row");
   }
@@ -172,13 +221,13 @@ function selectRow(row) {
   selectedRow = row;
 }
 
-// Edit row via "Edit" button
+// Pré-remplir le formulaire via le bouton "Modifier"
 function onEdit(td) {
   let row = td.parentElement.parentElement;
   remplirFormulaireDepuisLigne(row);
 }
 
-// Update table record
+// Mettre à jour la ligne dans le tableau HTML après modification
 function updateRecord(formData) {
   selectedRow.cells[0].innerHTML = formData.bloc;
   selectedRow.cells[1].innerHTML = formData.nom;
@@ -192,9 +241,9 @@ function updateRecord(formData) {
   selectedRow.cells[9].innerHTML = formData.sex;
 }
 
-// Delete record
+// Supprimer un patient
 function onDelete(td) {
-  if (confirm("Are you sure you want to delete this patient?")) {
+  if (confirm("Êtes-vous sûr de vouloir supprimer ce patient ?")) {
     let row = td.parentElement.parentElement;
     let id = row.dataset.id;
 
@@ -205,27 +254,27 @@ function onDelete(td) {
         resetForm();
         alert(data.message);
       })
-      .catch((err) => console.error("Error deleting:", err));
+      .catch((err) => console.error("Erreur suppression:", err));
   }
 }
 
-// Reset form
+// Réinitialiser le formulaire
 function resetForm() {
   document.getElementById("patientForm").reset();
   selectedRow = null;
 }
 
-// Validate form
+// Validation basique des champs
 function validate() {
   let isValid = true;
   if (document.getElementById("nom").value === "") {
     isValid = false;
-    alert("Last name is required!");
+    alert("Le nom est obligatoire !");
   }
   return isValid;
 }
 
-// Search table instantly
+// Recherche instantanée dans le tableau
 function searchTable() {
   let input = document.getElementById("searchInput");
   let filter = input.value.toLowerCase();
@@ -247,7 +296,7 @@ function searchTable() {
   }
 }
 
-// Load patients on window load
-window.onload = function() {
+// Charger les patients automatiquement au chargement de la page
+window.onload = function () {
   chargerPatients();
 };

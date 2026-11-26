@@ -1,12 +1,25 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(express.static("."));
 
-const db = new sqlite3.Database("Hopital.db", (err) => {
+// Since server.js is inside js/, ".." points back to Gestion_patient_CHU_2
+const rootDir = path.join(__dirname, "..");
+
+app.use("/css", express.static(path.join(rootDir, "css")));
+app.use("/js", express.static(path.join(rootDir, "js")));
+app.use("/photos", express.static(path.join(rootDir, "photos")));
+app.use("/html", express.static(path.join(rootDir, "html")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(rootDir, "html", "index.html"));
+});
+
+// Hopital.db is in the same js/ folder as server.js (__dirname)
+const db = new sqlite3.Database(path.join(__dirname, "Hopital.db"), (err) => {
   if (err) console.error("Erreur de connexion", err.message);
   else console.log("Connecté à la base SQLite avec succès !");
 });
@@ -51,7 +64,9 @@ app.post("/api/patients", (req, res) => {
   db.get(checkDupQuery, [nom, prenom, phone], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (row) {
-      return res.status(400).json({ error: "Ce patient est déjà enregistré dans le système !" });
+      return res
+        .status(400)
+        .json({ error: "Ce patient est déjà enregistré dans le système !" });
     }
 
     // 2. Détermination de la capacité maximale
@@ -95,7 +110,10 @@ app.post("/api/patients", (req, res) => {
         ],
         function (err) {
           if (err) return res.status(500).json({ error: err.message });
-          res.json({ id: this.lastID, message: "Patient ajouté avec succès !" });
+          res.json({
+            id: this.lastID,
+            message: "Patient ajouté avec succès !",
+          });
         },
       );
     });
@@ -122,7 +140,9 @@ app.put("/api/patients/:id", (req, res) => {
   db.get(checkDupQuery, [nom, prenom, phone, patientId], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (row) {
-      return res.status(400).json({ error: "Un autre patient possède déjà ces informations !" });
+      return res
+        .status(400)
+        .json({ error: "Un autre patient possède déjà ces informations !" });
     }
 
     // 2. Capacité max
@@ -183,21 +203,23 @@ app.delete("/api/patients/:id", (req, res) => {
 
 // ROUTE DE FILTRAGE AVANCÉ (Âge / Séjour, Supérieur / Inférieur)
 app.get("/api/patients/filtrer-avance", (req, res) => {
-    let { critere, operateur, valeur } = req.query;
+  let { critere, operateur, valeur } = req.query;
 
-    if (!critere || !operateur || !valeur) {
-        return res.status(400).json({ error: "Paramètres de filtrage incomplets." });
-    }
+  if (!critere || !operateur || !valeur) {
+    return res
+      .status(400)
+      .json({ error: "Paramètres de filtrage incomplets." });
+  }
 
-    let col = critere === "sejours" ? "sejours" : "age";
-    let comp = operateur === "superieur" ? ">" : "<";
+  let col = critere === "sejours" ? "sejours" : "age";
+  let comp = operateur === "superieur" ? ">" : "<";
 
-    let query = `SELECT * FROM patients WHERE ${col} ${comp} ?`;
-    
-    db.all(query, [valeur], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
+  let query = `SELECT * FROM patients WHERE ${col} ${comp} ?`;
+
+  db.all(query, [valeur], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
 });
 
 app.get("/api/patients/stats", (req, res) => {

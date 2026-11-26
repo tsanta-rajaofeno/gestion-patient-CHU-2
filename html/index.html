@@ -4,46 +4,59 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestion des Patients</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="logo_chu.jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" href="../photos/logo_chu.jpg" type="image/x-icon" />
   </head>
   <body>
-    <!-- Static Top Header -->
+    <!-- En-tête supérieur statique : Recherche + Panneau de filtrage dynamique -->
     <div class="top-sticky-header">
       <input
         type="text"
         id="searchInput"
         onkeyup="searchTable()"
-        placeholder="Find a patient..."
+        placeholder="Rechercher un patient..."
       />
       <div class="sql-buttons-container">
         <button onclick="chargerPatients()" style="padding: 8px">
-          Afficher tout (Read)
+          Afficher tout
         </button>
 
-        <!-- DYNAMIC FILTER PANEL -->
+        <!-- NOUVEAU PANNEAU DE FILTRAGE DYNAMIQUE -->
         <div class="filter-panel">
           <select id="critereFiltre">
-            <option value="age">By Age</option>
-            <option value="sejours">By Stay (days)</option>
+            <option value="age">Par Âge</option>
+            <option value="sejours">Par Séjour (jours)</option>
           </select>
 
           <select id="operateurFiltre">
-            <option value="superieur">Greater than (>)</option>
-            <option value="inferieur">Less than (<)</option>
+            <option value="superieur">Supérieur à (>)</option>
+            <option value="inferieur">Inférieur à (<)</option>
           </select>
 
-          <input type="number" id="valeurFiltre" placeholder="ex: 25" />
+          <input
+            type="number"
+            id="valeurFiltre"
+            placeholder="ex: 25"
+            min="0"
+            step="1"
+            onkeydown="blockNonIntegers(event)"
+            oninput="sanitizeIntegerInput(this)"
+          />
 
           <button onclick="appliquerFiltreDynamique()" class="btn-filter">
-            Filter
+            Filtrer
           </button>
         </div>
 
         <button onclick="chargerStats()" style="padding: 8px">
-          Statistics (Average / Total)
+          Statistiques (Moyenne / Total)
         </button>
-        <a class="accueil" href="accueil.html" style="display: inline-block; margin-left: 10px;">Home Page</a>
+        <a
+          class="accueil"
+          href="../html/accueil.html"
+          style="display: inline-block; margin-left: 10px"
+          >Page d'Accueil</a
+        >
       </div>
     </div>
 
@@ -60,43 +73,43 @@
                 autocomplete="off"
                 id="patientForm"
               >
-                <!-- ASSIGNMENT SELECT -->
+                <!-- CHAMP AFFECTATION STRUCTURÉ (CHU ANDRAINJATO) -->
                 <div>
-                  <label for="bloc">Assignment:</label>
+                  <label for="bloc">Affectation :</label>
                   <select name="bloc" id="bloc" required>
-                    <option value="">-- Select Assignment --</option>
-                    
-                    <optgroup label="Public Ward (Wards A1 - A8)">
-                      <option value="A1">Ward A1</option>
-                      <option value="A2">Ward A2</option>
-                      <option value="A3">Ward A3</option>
-                      <option value="A4">Ward A4</option>
-                      <option value="A5">Ward A5</option>
-                      <option value="A6">Ward A6</option>
-                      <option value="A7">Ward A7</option>
-                      <option value="A8">Ward A8</option>
+                    <option value="">-- Sélectionner l'affectation --</option>
+
+                    <optgroup label="Bloc Public (Salles A1 - A8) - 6 MAX">
+                      <option value="A1">Salle A1</option>
+                      <option value="A2">Salle A2</option>
+                      <option value="A3">Salle A3</option>
+                      <option value="A4">Salle A4</option>
+                      <option value="A5">Salle A5</option>
+                      <option value="A6">Salle A6</option>
+                      <option value="A7">Salle A7</option>
+                      <option value="A8">Salle A8</option>
                     </optgroup>
 
-                    <optgroup label="Private Block (Rooms B1 - B6)">
-                      <option value="B1">Private Room B1</option>
-                      <option value="B2">Private Room B2</option>
-                      <option value="B3">Private Room B3</option>
-                      <option value="B4">Private Room B4</option>
-                      <option value="B5">Private Room B5</option>
-                      <option value="B6">Private Room B6</option>
+                    <optgroup label="Bloc Privé (Chambres B1 - B6) - 1 MAX">
+                      <option value="B1">Chambre Privée B1</option>
+                      <option value="B2">Chambre Privée B2</option>
+                      <option value="B3">Chambre Privée B3</option>
+                      <option value="B4">Chambre Privée B4</option>
+                      <option value="B5">Chambre Privée B5</option>
+                      <option value="B6">Chambre Privée B6</option>
                     </optgroup>
 
-                    <optgroup label="Consultation Offices">
-                      <option value="Porte 1">Office - Door 1</option>
-                      <option value="Porte 2">Office - Door 2</option>
-                      <option value="Porte 3">Office - Door 3</option>
-                      <option value="Porte 4">Office - Door 4</option>
+                    <optgroup label="Cabinets de Consultation - 20 MAX">
+                      <option value="Porte 1">Cabinet - Porte 1</option>
+                      <option value="Porte 2">Cabinet - Porte 2</option>
+                      <option value="Porte 3">Cabinet - Porte 3</option>
+                      <option value="Porte 4">Cabinet - Porte 4</option>
                     </optgroup>
                   </select>
                 </div>
 
                 <div>
-                  <label for="nom">Last Name:</label>
+                  <label for="nom">Nom:</label>
                   <input
                     type="text"
                     name="nom"
@@ -107,7 +120,7 @@
                 </div>
 
                 <div>
-                  <label for="prenom">First Name:</label>
+                  <label for="prenom">Prénom:</label>
                   <input
                     type="text"
                     name="prenom"
@@ -129,29 +142,29 @@
                 </div>
 
                 <div>
-                  <label for="addresse">Address:</label>
+                  <label for="addresse">Adresse:</label>
                   <input
                     type="text"
                     name="addresse"
                     id="addresse"
-                    placeholder="Neightborhood City"
+                    placeholder="Quartier Ville"
                     required
                   />
                 </div>
 
                 <div>
-                  <label for="maladie">Disease:</label>
+                  <label for="maladie">Maladie:</label>
                   <input
                     type="text"
                     name="maladie"
                     id="maladie"
-                    placeholder="Disease"
+                    placeholder="Maladie"
                     required
                   />
                 </div>
 
                 <div>
-                  <label for="phone">Phone:</label>
+                  <label for="phone">Téléphone:</label>
                   <input
                     type="tel"
                     name="phone"
@@ -162,7 +175,7 @@
                 </div>
 
                 <div>
-                  <label for="date_entree">Entry Date:</label>
+                  <label for="date_entree">Date d'entrée:</label>
                   <input
                     type="date"
                     name="date_entree"
@@ -172,7 +185,7 @@
                 </div>
 
                 <div>
-                  <label for="sejours">Estimated Stays (days):</label>
+                  <label for="sejours">Séjours éstimés(jours):</label>
                   <input
                     type="number"
                     name="sejours"
@@ -183,16 +196,16 @@
                 </div>
 
                 <div>
-                  <label for="sex">Sex:</label>
+                  <label for="sex">Sexe:</label>
                   <select name="sex" id="sex" required>
-                    <option value="">Select Sex</option>
+                    <option value="">Selectionner Sexe</option>
                     <option value="M">M</option>
                     <option value="F">F</option>
                   </select>
                 </div>
 
                 <div class="form-action-buttons">
-                  <input type="submit" value="Save" />
+                  <input type="submit" value="Enregistrer" />
                 </div>
               </form>
             </td>
@@ -201,16 +214,16 @@
               <table class="list" id="patient_liste">
                 <thead>
                   <tr>
-                    <th>Box</th>
-                    <th>Last Name</th>
-                    <th>First Name</th>
+                    <th>Bloc</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
                     <th>Age</th>
-                    <th>Address</th>
-                    <th>Disease</th>
-                    <th>Phone</th>
-                    <th>E/D</th>
-                    <th>E/S(d)</th>
-                    <th>Sex</th>
+                    <th>Adresse</th>
+                    <th>Maladie</th>
+                    <th>Téléphone</th>
+                    <th>D/E</th>
+                    <th>S/E(j)</th>
+                    <th>Sexe</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -223,10 +236,11 @@
         </thead>
       </table>
       <div class="language">
-        <a href="index.html">Fr</a> | <a href="index_en.html">En</a>
+        <a href="../html/index.html">Fr</a> |
+        <a href="../html/index_en.html">En</a>
       </div>
     </div>
 
-    <script src="script_en.js"></script>
+    <script src="../js/script.js"></script>
   </body>
 </html>
